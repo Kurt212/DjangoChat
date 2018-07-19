@@ -1,0 +1,96 @@
+<!-- chat/templates/chat/room.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+    <style>
+        #roomname,  #username {
+            float: left; 
+            font-size: 20pt;
+            width: 50%;
+        }
+        #username {
+            text-align: right;
+        }
+        #chat-message-submit {
+            height: 35px;
+            font-size: 16pt;
+        }
+        #chat-message-input {
+            height: 20pt;
+            font-size: 20pt;
+        }
+        body {
+            margin-top: 100px;
+            margin-left: 25%;
+            margin-right: 25%;
+        }    
+        .controls textarea, .controls input{
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <p id="roomname"> You are in room <span style="color:red">{{ room_name_json }}</span> </p>
+    {% if user.is_authenticated %}
+        <p id="username"> Hello, <span style="color:red">{{ user.username }}</span>. </p>
+    {% else %}
+        <p id="username"> You are not LogedIn </p>
+    {% endif %}
+    <div class="controls">
+        <textarea id="chat-log" cols="100" rows="20" readonly></textarea><br/>
+        <input id="chat-message-input" type="text" placeholder="Message" size="100"/><br/>
+        <input id="chat-message-submit" type="button" value="Send"/>
+    </div>
+</body>
+<script>
+    var roomName = {{ room_name_json }};
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    var chatBox = document.querySelector('#chat-log');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        chatBox.value += (message + '\n');
+    };
+
+    chatSocket.onclose = function(e) {
+        msg = 'Chat socket closed unexpectedly';
+        console.error(msg);
+        chatBox.value += msg;
+
+        document.querySelector('#chat-message-input').disabled = "1";
+        document.querySelector('#chat-message-submit').disabled = "1";
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        if (messageInputDom.value === "") {
+            return;
+        }
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+
+        messageInputDom.value = '';
+    };
+  
+
+    chatBox.value += "{{ chat_text }}";
+    chatBox.scrollTop = document.querySelector('#chat-log').scrollHeight;
+
+</script>
+</html>
