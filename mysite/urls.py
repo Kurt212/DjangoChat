@@ -21,5 +21,6 @@ urlpatterns = [
     path('', RedirectView.as_view(url='chat/', permanent=True)),
     path('admin/', admin.site.urls),
     path('chat/', include("chat.urls")),
+    path('login/', include('login.urls')),
     #path('login/', include("login.urls")),
 ]

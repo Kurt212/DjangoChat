@@ -4,4 +4,7 @@ db.sqlite3-journal
 chat/__pycache__
 chat/migrations
 
+login/__pycache__
+login/migrations
+
 mysite/__pycache__

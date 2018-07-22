@@ -33,15 +33,32 @@
         #chat-log {
             height: 200px;
         }
+        #logout_form {
+            float: left;
+            text-align: right;
+            width: 100%;
+        }
+        #logout_button {
+            margin: 10px;
+            padding: 0 30px;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
     <p id="roomname"> You are in room <span style="color:red">{{ room_name_json }}</span> </p>
     {% if user.is_authenticated %}
-        <p id="username"> Hello, <span style="color:red">{{ user.username }}</span>. </p>
-    {% else %}
-        <p id="username"> You are not LogedIn </p>
-    {% endif %}
+            <p id="username">
+                Hello, <span style="color:red">{{ user.username }}</span>.
+            </p>
+            <br/>
+            <form id="logout_form" action="/login/logout/" method="POST">
+                {% csrf_token %}
+                <input id="logout_button" type="submit" value="Logout">
+            </form>
+        {% else %}
+            <p id="username"> You are not LogedIn. <a href="/login/signin/">Want to do it?</a> </p>
+        {% endif %}
     <div class="controls">
         <textarea id="chat-log" cols="100" rows="20" readonly></textarea><br/>
         <input id="chat-message-input" type="text" placeholder="Message" size="100"/><br/>

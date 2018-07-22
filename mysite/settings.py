@@ -35,6 +35,7 @@ ASGI_APPLICATION = 'mysite.routing.application'
 INSTALLED_APPS = [
     'channels',
     'chat',
+    'login',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

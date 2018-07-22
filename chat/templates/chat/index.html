@@ -22,14 +22,41 @@
             height: 35px;
             font-size: 16pt;
         }
-        #TitleHeadder {
+        #TitleHeadder, #username {
             font-size: 20pt;
+            float: left;
+            width: 50%;
+        }
+        #username {
+            text-align: right;
+        }
+        #logout_form {
+            float: left;
+            text-align: right;
+            width: 100%;
+        }
+        #logout_button {
+            margin: 10px;
+            padding: 0 30px;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
     <div class='content'>
-        <p id="TitleHeadder" align='center'>What chat room would you like to enter?</p>
+        <p id="TitleHeadder">What chat room would you like to enter?</p>
+        {% if user.is_authenticated %}
+            <p id="username">
+                Hello, <span style="color:red">{{ user.username }}</span>.
+            </p>
+            <br/>
+            <form id="logout_form" action="/login/logout/" method="POST">
+                {% csrf_token %}
+                <input id="logout_button" type="submit" value="Logout">
+            </form>
+        {% else %}
+            <p id="username"> You are not LogedIn. <a href="/login/signin/">Want to do it?</a> </p>
+        {% endif %}
         <input id="room-name-input" type="text" size="100" placeholder="Room name"><br/>
         <input id="room-name-submit" type="button" value="Enter"/>
     </div>
